@@ -1,0 +1,73 @@
+{
+  "baseline_revision": "78f82dc085bddfbcedf031ac0c34ff088c0ec6d1",
+  "baseline_sha256": "b51e87a34cd1776104588a8cb60aa1e6831b28192d5aae396a0338290ef05572",
+  "fixed_sha256": "663938f59dace03a8ae419f50709c0ae53b56c187b5dd639a08fb78e285cb927",
+  "python": "3.13.16",
+  "numpy": "2.2.4",
+  "pillow": "11.1.0",
+  "hardware_tested": false,
+  "patterns": {
+    "color": {
+      "different_pixels": 76798,
+      "fixed_matches_reference": true
+    },
+    "alpha": {
+      "different_pixels": 76798,
+      "fixed_matches_reference": true
+    }
+  },
+  "files": {
+    "DEVICE_SHA256SUMS": {
+      "bytes": 330,
+      "sha256": "c8e8ac348734493d74fd7b87e822e3ca3e2bfdba82137835601b034b4ba10e01"
+    },
+    "alpha-after-preview.png": {
+      "bytes": 4412,
+      "sha256": "e4974257bcc455ede9d5984dcaa400e3850c2497614950705e4dcf94f604755d"
+    },
+    "alpha-after.img": {
+      "bytes": 153600,
+      "sha256": "4885cd7c08a2b6ecb3ee3dfa90e059b333a674fbd68607d4c3ab65dc3a7dc8ad"
+    },
+    "alpha-before-preview.png": {
+      "bytes": 3872,
+      "sha256": "12d7f1d755af6319b9b18b105080175b2aa3133668dd7b51d634cd36e0a5747d"
+    },
+    "alpha-before.img": {
+      "bytes": 153600,
+      "sha256": "47f6f448576e22212fff7d45e8aa84fdbd26cb8717c36cbeebddabc423390170"
+    },
+    "alpha-comparison.png": {
+      "bytes": 9884,
+      "sha256": "8425e466dfb0b34ea6c79527285666e493b3ea6467341ca648045876928bdef8"
+    },
+    "alpha-source.png": {
+      "bytes": 4071,
+      "sha256": "9e2ceca6ec488714a620f48afe00062a0321ed01f38e9ec5e9fc1b8600d014bc"
+    },
+    "color-after-preview.png": {
+      "bytes": 5898,
+      "sha256": "cce3da2e41f35ce5153dbd4f42f621ec0b0854b8d6920cbdecc7075edb0b5d37"
+    },
+    "color-after.img": {
+      "bytes": 153600,
+      "sha256": "1df3f570db9206e7dbcc2be75019cb5f065834d48db0b8220e20bd6e175b4465"
+    },
+    "color-before-preview.png": {
+      "bytes": 5050,
+      "sha256": "060d7da378e23aa4988e54a69cda066156983b7027d64fddff372f5a2489dbf1"
+    },
+    "color-before.img": {
+      "bytes": 153600,
+      "sha256": "6ace18da1c2a6cef8a0c21ab79db623590f8aa654fd865306a3b45a764dc4aab"
+    },
+    "color-comparison.png": {
+      "bytes": 13031,
+      "sha256": "5e4f3dd1df2ea3a41cfb6a4b06202366f5f814906fb71fa027b0ccc3337acc19"
+    },
+    "color-source.png": {
+      "bytes": 7154,
+      "sha256": "c3df23816ecfda843b9721f6eb6418a7cb2139e25c3294fd4ce359ad1b1a0d58"
+    }
+  }
+}
