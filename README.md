@@ -5,65 +5,55 @@ Adventurer 3's 240 × 320 display.
 
 ## Usage
 
-I suggest using [uv](https://docs.astral.sh/uv/) to create the virtual
-environment and install the dependencies:
+Install the dependencies, for example with [uv](https://docs.astral.sh/uv/):
 
 ```sh
 uv venv
 uv pip install Pillow NumPy
+source .venv/bin/activate
 ```
 
-Then run from this checkout with the environment activated:
+Then convert in either direction:
 
 ```sh
-source .venv/bin/activate
 python3 png2ffa3fb.py source.png destination.img
 python3 png2ffa3fb.py source.img destination.png
 ```
 
-The encoder does not resize or clip: input must be exactly 240 × 320 pixels.
-The raw file is exactly 153600 bytes, with little-endian RGB565 pixels (red
-bits 15–11, green 10–5, blue 4–0). The converter rotates 180° in both
-directions for the screen's mounting orientation. Decoded red and blue values
-have five-bit precision, while green has six-bit precision.
+- The PNG must be exactly 240 × 320 pixels; nothing is resized or cropped.
+- The raw file is 153600 bytes of little-endian RGB565, rotated 180° to match
+  how the display is mounted. Decoding rotates it back.
+- RGBA images are composited over white. `LA` and palette transparency are not
+  supported; convert such images to RGBA first.
+- Decoded images keep 5 bits of red and blue and 6 bits of green.
 
-RGBA input is composited over white. The existing implementation does not
-support `LA` directly and does not retain palette transparency; normalize those
-inputs to RGBA first if alpha must be preserved against white.
+Versions before f9c62e3 wrote RGBA5551 and lost colours under NumPy 2. Files made
+with them show wrong colours on the display; convert them again.
 
-## NumPy compatibility
+## Show an image on the printer
 
-NumPy 2 preserves the eight-bit type of channel scalars during shifts, which
-caused the old encoder to lose high colour bits. The encoder now converts each
-channel to a Python integer before shifting. The file layout is the
-runtime-reported RGB565 layout. See NumPy's
-[data-type promotion migration notes](https://numpy.org/doc/2.0/numpy_2_0_migration_guide.html#changes-to-numpy-data-type-promotion).
+On the printer (over SSH), save the current screen, show the image, then restore:
+
+```sh
+dd if=/dev/fb0 of=/tmp/saved.img bs=153600 count=1
+cat image.img > /dev/fb0
+cat /tmp/saved.img > /dev/fb0
+```
+
+This assumes the display layout of the tested printer: 16 bits per pixel and
+480-byte rows (see `/sys/class/graphics/fb0/`). The printer's own software may
+draw over the image while it runs.
 
 ## Tests
-
-The regression suite uses the standard library's unittest runner and the same
-Pillow/NumPy dependencies as the converter:
 
 ```sh
 uv run python -m unittest discover -s tests -v
 ```
 
-It checks fixed pixel words, rotation, byte order, all 65536 RGB565 colours,
-RGBA-on-white compositing, grayscale conversion, and invalid inputs without
-clobbering an existing destination. It also checks CLI failure followed by a
-successful conversion. The suite passes with these checked combinations:
-
-| Python | NumPy | Pillow |
-| --- | --- | --- |
-| 3.11.18 | 1.26.4 | 11.1.0 |
-| 3.13.16 | 2.2.4 | 11.1.0 |
-
-File-level checks do not establish physical display colour or orientation. The
-`*-after.img` charts in [device tests](device-tests/README.md) were viewed on an
-Adventurer 3 on 2026-11-10 and showed the expected colours and orientation.
-
-For before/after raw images and a device test procedure, see
-[device tests](device-tests/README.md).
+The tests cover pixel values, rotation, byte order, all 65536 colours, alpha,
+grayscale and invalid input. They pass with Python 3.11 / NumPy 1.26 and
+Python 3.13 / NumPy 2.2 (Pillow 11.1). The [device test charts](device-tests/README.md)
+showed the expected colours and orientation on one printer (2026-11-10).
 
 ## License
 
