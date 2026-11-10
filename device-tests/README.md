@@ -11,8 +11,6 @@ from the same source PNG with NumPy 2.
 
 - Only the `*-after.img` files are meant for the display. The `*-before.img`
   files show the old bug and are for comparison only.
-- [generated-rgba5551-queued/](generated-rgba5551-queued/) is an earlier set in
-  the old RGBA5551 layout. Do not write it to the display.
 - [manifest.json](generated/manifest.json) records versions and hashes.
   [SHA256SUMS](generated/SHA256SUMS) covers all files and
   [DEVICE_SHA256SUMS](generated/DEVICE_SHA256SUMS) only the raw images.
