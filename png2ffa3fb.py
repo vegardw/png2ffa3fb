@@ -78,14 +78,15 @@ def png_to_framebuffer(source: str, destination: str) -> None:
         img_array = np.array(img).reshape(-1, 3)
         bytes_array = np.zeros((width * height, bytes_per_pixel), dtype=np.uint8)
 
-        # The pixel is saved as a 16 bit little endian value with the following bits used
-        # for the different channels: RRRRRGGGGGBBBBBA (RGBA5551)
-        # Since it is little endian the actual on disk structure is |GGBBBBBA|RRRRRGGG|
+        # The inspected fb_ili9341 reports little-endian RGB565:
+        # RRRRRGGGGGGBBBBB, with no alpha field.
+        # Since it is little endian the on-disk structure is |GGGBBBBB|RRRRRGGG|
         for i in range(width * height):
-            r = (img_array[i][0] >> 3) & 0x1F
-            g = (img_array[i][1] >> 3) & 0x1F
-            b = (img_array[i][2] >> 3) & 0x1F
-            pixel = (r << 11) | (g << 6) | (b << 1) | 1  # Setting alpha to 1
+            # Python ints keep the later left shifts from overflowing NumPy uint8 scalars.
+            r = (int(img_array[i][0]) >> 3) & 0x1F
+            g = (int(img_array[i][1]) >> 2) & 0x3F
+            b = (int(img_array[i][2]) >> 3) & 0x1F
+            pixel = (r << 11) | (g << 5) | b
             bytes_array[i, 0] = pixel & 0xFF
             bytes_array[i, 1] = (pixel >> 8) & 0xFF
 
@@ -114,14 +115,14 @@ def framebuffer_to_png(source: str, destination: str) -> None:
     with open(source, 'rb') as f:
         for i in range(height):
             for j in range(width):
-                # The pixel is saved as a 16 bit little endian value with the following bits used
-                # for the different channels: RRRRRGGGGGBBBBBA (RGBA5551)
-                # Since it is little endian the actual on disk structure is |GGBBBBBA|RRRRRGGG|
+                # The inspected fb_ili9341 reports little-endian RGB565:
+                # RRRRRGGGGGGBBBBB, with no alpha field.
+                # Since it is little endian the on-disk structure is |GGGBBBBB|RRRRRGGG|
                 pixel = unpack(unpack_format_string, f.read(bytes_per_pixel))[0]
                 img_array[i, j] = [
                     ((pixel >> 11) & 0x1F) << 3,  # red
-                    ((pixel >> 6)  & 0x1F) << 3,  # green
-                    ((pixel >> 1)  & 0x1F) << 3   # blue
+                    ((pixel >> 5)  & 0x3F) << 2,  # green
+                    (pixel         & 0x1F) << 3   # blue
                 ]
     
     img = Image.fromarray(img_array).rotate(rotation)
